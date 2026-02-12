@@ -15,11 +15,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import axios from "axios";
 import { useUser } from "@clerk/clerk-expo";
-import { useLevel } from "../../../context/LevelContext";
+import { useLevel } from "@/context/LevelContext";
 import * as Linking from "expo-linking";
-import { useTheme } from "../../../context/ThemeContext";
+import { useTheme } from "@/context/ThemeContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Video } from "expo-av";
+import { LoaderKitView } from "react-native-loader-kit";
+
 
 export default function InputScreen() {
     const [cast, setCast] = useState("");
@@ -208,7 +210,7 @@ export default function InputScreen() {
       };
 
       const res = await axios.post(
-        `https://bc-backend-three.vercel.app/api/posts`,
+        `https://cast-api-zeta.vercel.app/api/posts`,
         payload
       );
 
@@ -278,7 +280,12 @@ export default function InputScreen() {
                     ]}
                 >
                     {loading ? (
-                        <ActivityIndicator color="#fff" />
+                            <LoaderKitView
+  style={{ width: 50, height: 50 }}
+   name={"BallScaleRippleMultiple"}
+  animationSpeedMultiplier={1.0} // speed up/slow down animation, default: 1.0, larger is faster
+  color={'red'} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
+/>
                     ) : (
                         <Text style={styles.postButtonText}>Post</Text>
                     )}

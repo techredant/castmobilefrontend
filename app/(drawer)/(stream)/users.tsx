@@ -14,7 +14,8 @@ import { useTheme } from "@/context/ThemeContext";
 import { useChatContext } from "stream-chat-expo";
 import { router } from "expo-router";
 import { useUser } from "@clerk/clerk-expo";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { LoaderKitView } from "react-native-loader-kit";
+
 
 const BASE_URL = "https://cast-api-zeta.vercel.app/api/users";
 
@@ -29,7 +30,6 @@ interface Member {
 
 export default function MembersScreen() {
   const [members, setMembers] = useState<Member[]>([]);
-  const [loading, setLoading] = useState(true);
   const { theme, isDark } = useTheme();
   const { client } = useChatContext();
   const { user } = useUser();
@@ -53,9 +53,7 @@ const [search, setSearch] = useState("");
         setMembers(otherUsers);
       } catch (err) {
         console.error("❌ Fetch users error:", err);
-      } finally {
-        setLoading(false);
-      }
+      } 
     };
 
     if (currentUserId) fetchUsers();
@@ -128,13 +126,18 @@ const [search, setSearch] = useState("");
     );
   };
 
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ color: theme.text }}>Loading members...</Text>
-      </View>
-    );
-  }
+//   if (loading) {
+//     return (
+//       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+//              <LoaderKitView
+//   style={{ width: 50, height: 50 }}
+//    name={"BallScaleRippleMultiple"}
+//   animationSpeedMultiplier={1.0} // speed up/slow down animation, default: 1.0, larger is faster
+//   color={'red'} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
+// />
+//       </View>
+//     );
+//   }
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background }}>

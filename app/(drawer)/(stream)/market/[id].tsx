@@ -11,7 +11,7 @@ import {
     Pressable,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLocalSearchParams, router } from "expo-router";
+import { useLocalSearchParams, router, Link } from "expo-router";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@/context/ThemeContext";
@@ -47,7 +47,7 @@ export default function ProductDetail() {
     const [product, setProduct] = useState<Product | null>(null);
     const [loading, setLoading] = useState(true);
     const [activeIndex, setActiveIndex] = useState(0);
-      const { client } = useChatContext();
+    const { client } = useChatContext();
     
 
     useEffect(() => {
@@ -85,32 +85,46 @@ export default function ProductDetail() {
         );
     }
 
-      // Start a DM channel
-  const startDM = async (member: Member) => {
-    try {
-      if (!client?.userID) return;
 
-      // Prevent DM with yourself
-      if (product?.userId === client.userID) {
-        console.warn("Cannot DM yourself");
-        return;
-      }
+ 
 
-      const channel = client.channel("messaging", {
-        members: [client.userID, product.userId],
-        distinct: true,
-      });
+    const startDM = async () => {
+  if (!client || !client.userID || !product?.userId) return;
 
-      await channel.watch();
+  try {
+    const channel = client.channel("messaging", {
+      members: [client.userID, product.userId],
+      distinct: true,
 
-      router.push(`/(drawer)/(stream)/channel/${channel.cid}`);
-    } catch (err) {
-      console.error("❌ Failed to create DM:", err);
-    }
-  };
+      // 👇 Attach product context to the channel
+      productId: product._id,
+      productTitle: product.title,
+      productPrice: product.price,
+      productImage: product.images?.[0], // main image
+    });
+
+   await channel.watch();
+
+await channel.sendMessage({
+  text:`${product.title}` + "\n"  + `price:  KES ${product.price.toLocaleString("en-KE")}${product.price}  + "\n"  + ${<Link href={`/market/${product._id}`}></Link>}`, 
+ 
+  attachments: [
+    {
+      type: "image",
+      image_url: product.images?.[0],
+    },
+  ],
+});
+
+router.push(`/channel/${channel.cid}`);
+
+  } catch (err) {
+    console.error("❌ Failed to start chat:", err);
+  }
+};
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
+        <View style={{ flex: 1, backgroundColor: theme.background }}>
             <StatusBar
                 translucent
                 backgroundColor="transparent"
@@ -142,7 +156,7 @@ export default function ProductDetail() {
 
                 {/* BACK BUTTON */}
                 <TouchableOpacity
-                    onPress={() => router.back()}
+                    onPress={() => router.push("/(drawer)/(tabs)/")}
                     style={{ position: "absolute", top: 40, left: 16, backgroundColor: `${theme.text}50`, padding: 8, borderRadius: 999 }}
                 >
                     <Ionicons name="arrow-back" size={22} color={theme.background} />
@@ -213,7 +227,7 @@ export default function ProductDetail() {
             </ScrollView>
 
             {/* BOTTOM ACTION BAR */}
-            <View style={{
+            <SafeAreaView style={{
                 // position: "absolute",
                 bottom: 0,
                 left: 0,
@@ -223,7 +237,7 @@ export default function ProductDetail() {
                 borderTopColor: theme.border,
                 backgroundColor: theme.background,
                 paddingHorizontal: 16,
-                paddingVertical: 12
+                paddingVertical: 5
             }}>
                 <TouchableOpacity style={{ flex: 1, marginRight: 8, borderWidth: 1, borderColor: theme.success, borderRadius: 999, paddingVertical: 12, alignItems: "center" }}>
                     <Text style={{ color: theme.success, fontWeight: "600" }}>
@@ -231,12 +245,23 @@ export default function ProductDetail() {
                     </Text>
                 </TouchableOpacity>
 
-                <Pressable onPress={() => startDM} style={{ flex: 1, marginLeft: 8, backgroundColor: theme.success, borderRadius: 999, paddingVertical: 12, alignItems: "center" }}>
-                    <Text style={{ color: "#fff", fontWeight: "600" }}>
-                        Chat Seller
-                    </Text>
+                <Pressable
+                onPress={startDM}
+                style={{
+                    flex: 1,
+                    marginLeft: 8,
+                    backgroundColor: theme.success,
+                    borderRadius: 999,
+                    paddingVertical: 12,
+                    alignItems: "center",
+                }}
+                >
+                <Text style={{ color: "#fff", fontWeight: "600" }}>
+                    Chat with seller
+                </Text>
                 </Pressable>
-            </View>
-        </SafeAreaView>
+
+            </SafeAreaView>
+        </View>
     );
 }

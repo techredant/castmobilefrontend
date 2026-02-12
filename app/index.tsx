@@ -1,6 +1,6 @@
 // app/index.tsx
 import { Redirect } from "expo-router";
-import { useAuth, useUser } from "@clerk/clerk-expo";
+import { SignedIn, useAuth, useUser } from "@clerk/clerk-expo";
 import {
   View,
   Text,
@@ -12,21 +12,20 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useState, useMemo } from "react";
 import { useTheme } from "../context/ThemeContext";
-import { useLevel } from "@/context/LevelContext";
 
 export default function Index() {
-  const { isSignedIn, isLoaded } = useAuth();
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
+
   const { theme, isDark } = useTheme();
 
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const { userDetails, isLoadingUser } = useLevel();
+  
 
 
   // Clerk still loading
-  if (isLoadingUser) {
+  if (!isLoaded) {
     return (
-      <SafeAreaView style={styles.container}>
+      <View style={styles.container}>
         <StatusBar
           translucent
           backgroundColor="transparent"
@@ -41,12 +40,12 @@ export default function Index() {
         <ActivityIndicator size="large" color={theme.primary} />
 
         <Text style={styles.loadingText}>Loading BroadCast...</Text>
-      </SafeAreaView>
+      </View>
     );
   }
 
   // User is signed in → redirect to NameScreen
-  if (!user?.id) {
+  if (!user) {
     return <Redirect href="/(auth)/sign-in" />;
 
   } else 

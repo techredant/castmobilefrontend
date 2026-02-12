@@ -37,7 +37,7 @@ export default function StatusInput() {
     };
 
     return (
-        <SafeAreaView
+        <View
             style={[
                 styles.container,
                 { backgroundColor: backgrounds[bgIndex] },
@@ -93,7 +93,7 @@ export default function StatusInput() {
                     />
                 ))}
             </View>
-        </SafeAreaView>
+        </View>
     );
 }
 
@@ -103,7 +103,7 @@ export default function StatusInput() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingVertical: 20
+        paddingVertical: 30
     },
     header: {
         flexDirection: "row",

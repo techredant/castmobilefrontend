@@ -11,7 +11,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
 import { useTheme } from "../../context/ThemeContext";
-// import { LoaderKitView } from "react-native-loader-kit";
+import { LoaderKitView } from "react-native-loader-kit";
 
 const BASE_URL = "https://cast-api-zeta.vercel.app/api/users";
 
@@ -151,12 +151,12 @@ const MembersScreen: React.FC<MembersScreenProps> = ({ currentUserId }) => {
                 <View
                     style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
                 >
-                    {/* <LoaderKitView
-                        style={{ width: 50, height: 50 }}
-                        name="BallScaleRippleMultiple"
-                        animationSpeedMultiplier={1.0}
-                        color={theme.text}
-                    /> */}
+                    <LoaderKitView
+                    style={{ width: 50, height: 50 }}
+                    name={"BallScaleRippleMultiple"}
+                    animationSpeedMultiplier={1.0} // speed up/slow down animation, default: 1.0, larger is faster
+                    color={'red'} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
+                    />
                 </View>
             ) : (
                 <FlatList

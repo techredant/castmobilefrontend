@@ -15,6 +15,8 @@ import { router } from "expo-router";
 import iebc from "../../assets/data/iebc.json";
 import { useTheme } from "../../context/ThemeContext";
 import Animated, { FadeInDown } from "react-native-reanimated";
+import { LoaderKitView } from "react-native-loader-kit";
+
 
 export default function LocationSelection() {
   const { theme, isDark } = useTheme();
@@ -195,11 +197,12 @@ export default function LocationSelection() {
             }}
           >
             {loading && (
-              <ActivityIndicator
-                size="small"
-                color={theme.text}
-                style={{ marginRight: 8 }}
-              />
+              <LoaderKitView
+  style={{ width: 50, height: 50 }}
+   name={"BallScaleRippleMultiple"}
+  animationSpeedMultiplier={1.0} // speed up/slow down animation, default: 1.0, larger is faster
+  color={'red'} // Optional: color can be: 'red', 'green',... or '#ddd', '#ffffff',...
+/>
             )}
             <Text style={{ color: theme.text, fontWeight: "bold", fontSize: 16 }}>
               Continue

@@ -6,15 +6,19 @@ import { tokenProvider } from "../utils/tokenProvider";
 import { useLevel } from "@/context/LevelContext";
 import { useUser } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
+import { LoaderKitView } from "react-native-loader-kit";
+import { useTheme } from "@/context/ThemeContext";
+
 
 const client = StreamChat.getInstance(process.env.EXPO_PUBLIC_STREAM_API_KEY!);
 
 export default function ChatProvider({ children }: PropsWithChildren) {
-  const [isReady, setIsReady] = useState(false);
+  const [isReady, setIsReady] = useState(true);
 
   const {userDetails}  = useLevel()
   const {user} = useUser()
   const router = useRouter()
+  const {theme} = useTheme()
 
 useEffect(() => {
   let isMounted = true;
@@ -65,8 +69,13 @@ useEffect(() => {
 
   if (!isReady) {
     return (
-      <View style={{ flex: 1, justifyContent: "center" }}>
-        <ActivityIndicator size="small" color="blue" />
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <LoaderKitView
+          style={{ width: 50, height: 50 }}
+          name={"BallScaleRippleMultiple"}
+          animationSpeedMultiplier={1.0} 
+          color={theme.text} 
+        />
       </View>
     );
   }

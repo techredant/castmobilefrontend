@@ -20,6 +20,8 @@ import * as ImagePicker from "expo-image-picker";
 import { Picker } from "@react-native-picker/picker";
 import { useTheme } from "@/context/ThemeContext";
 import { useRouter } from "expo-router";
+import { LoaderKitView } from "react-native-loader-kit";
+
 
 const accountOptions = [
   "Personal Account",
@@ -252,7 +254,12 @@ const NamesScreen = () => {
             disabled={loading}
             style={{ backgroundColor: theme.primary, padding: 16, borderRadius: 12, alignItems: "center", marginTop: 20 }}
           >
-            {loading ? <ActivityIndicator color="#fff" /> : <Text style={{ color: "#fff", fontWeight: "bold" }}>Save & Continue</Text>}
+            {loading ?   <LoaderKitView
+          style={{ width: 50, height: 50 }}
+          name={"BallScaleRippleMultiple"}
+          animationSpeedMultiplier={1.0} 
+          color={theme.text} 
+        /> : <Text style={{ color: "#fff", fontWeight: "bold" }}>Save & Continue</Text>}
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>

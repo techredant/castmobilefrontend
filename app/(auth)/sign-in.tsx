@@ -17,6 +17,8 @@ import GoogleSignIn from "../../components/Button/GoogleSignIn";
 import { useRouter } from "expo-router";
 import { useTheme } from "../../context/ThemeContext";
 import Animated, { FadeInDown } from "react-native-reanimated";
+import { LoaderKitView } from "react-native-loader-kit";
+
 
 const SignUpScreen = () => {
   const router = useRouter();
@@ -105,7 +107,13 @@ const SignUpScreen = () => {
           disabled={loading}
           style={[styles.button, { backgroundColor: theme.primary }]}
         >
-          {loading && <ActivityIndicator size="small" color="white" />}
+          {loading && 
+        <LoaderKitView
+          style={{ width: 50, height: 50 }}
+          name={"BallScaleRippleMultiple"}
+          animationSpeedMultiplier={1.0} 
+          color={theme.text} 
+        />}
           <Text style={styles.buttonText}>Verify</Text>
         </TouchableOpacity>
       </SafeAreaView>
@@ -161,7 +169,13 @@ const SignUpScreen = () => {
         onPress={onSignUpPress}
         style={[styles.button, { backgroundColor: theme.primary }]}
       >
-        {loading && <ActivityIndicator size="small" color="#fff" />}
+        {loading && 
+        <LoaderKitView
+          style={{ width: 50, height: 50 }}
+          name={"BallScaleRippleMultiple"}
+          animationSpeedMultiplier={1.0} 
+          color={theme.text} 
+        />}
         <Text style={styles.buttonText}>Continue</Text>
       </TouchableOpacity>
 

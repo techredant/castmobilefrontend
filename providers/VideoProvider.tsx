@@ -1,53 +1,37 @@
-import {
-  StreamVideo,
-  StreamVideoClient,
-} from "@stream-io/video-react-native-sdk";
-import { PropsWithChildren, useEffect, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
-import { tokenProvider } from "@/utils/tokenProvider";
-import { useLevel } from "@/context/LevelContext";
+import { StreamVideoClient, StreamVideo } from "@stream-io/video-react-native-sdk";
+import axios from "axios";
+import { useUser } from "@clerk/clerk-expo";
+import { useEffect, useState } from "react";
 
-const apiKey = process.env.EXPO_PUBLIC_STREAM_API_KEY;
-
-export default function VideoProvider({ children }: PropsWithChildren) {
-  const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(
-    null
-  );
-  const { userDetails } = useLevel();
+export function VideoProvider({ children }) {
+  const { user } = useUser();
+  const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null);
 
   useEffect(() => {
-    if (!userDetails || !apiKey) {
-      return;
-    }
+    if (!user) return;
 
-    const initVideoClient = async () => {
-      const user = {
-        id: userDetails.id,
-        name: userDetails.full_name,
-        image: userDetails?.image
-      };
-      const client = new StreamVideoClient({ apiKey, user, tokenProvider });
+    const init = async () => {
+      const { data } = await axios.post("https://cast-api-zeta.vercel.app/api/stream/video-token", {
+        userId: user.id,
+      });
+
+      const client = StreamVideoClient.getOrCreateInstance({
+        apiKey: process.env.EXPO_PUBLIC_STREAM_API_KEY!,
+        user: {
+          id: user.id,
+          name: user.fullName ?? user.username ?? "User",
+          image: user.imageUrl,
+        },
+        token: data.token,
+      });
+
       setVideoClient(client);
     };
 
-    initVideoClient();
-    return () => {
-      if (videoClient) {
-        videoClient.disconnectUser();
-      }
-    };
-  }, [userDetails?.id]);
+    init();
+  }, [user]);
 
-  if (!videoClient) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center" }}>
-        <ActivityIndicator size="large" color="red" />
-      </View>
-    );
-  }
+  if (!videoClient) return null;
+
   return <StreamVideo client={videoClient}>{children}</StreamVideo>;
-}
-
-function async() {
-  throw new Error("Function not implemented.");
 }

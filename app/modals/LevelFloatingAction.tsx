@@ -50,7 +50,7 @@ const fabTranslateY = useSharedValue(0);
     toggle();
 
     if (type === "ai") {
-      router.push("/ai");
+      router.push("/ai/ai-index");
       return;
     }
 
@@ -125,20 +125,68 @@ const fabTranslateY = useSharedValue(0);
     },
   ];
 
+//   return (
+//   <Animated.View
+//   entering={FadeIn} exiting={FadeOut}
+//     style={[
+//       {
+//         position: "absolute",
+//         right: 0,
+//         bottom: 0,
+//         width,
+//         height,
+//         pointerEvents: "box-none",
+//       },
+//       containerAnimatedStyle,
+//     ]}
+//   >
+//     {open && (
+//       <Animated.View entering={FadeIn} exiting={FadeOut} style={styles.overlay}>
+//         <Pressable style={StyleSheet.absoluteFill} onPress={toggle} />
+//       </Animated.View>
+//     )}
+
+//     {actions.map(action => {
+//       const animatedStyle = useAnimatedStyle(() => ({
+//         transform: [
+//           { translateY: -progress.value * action.offset },
+//           { scale: progress.value },
+//         ],
+//         opacity: progress.value,
+//       }));
+
+//       return (
+//         <Animated.View
+//           key={action.key}
+//           style={[styles.actionContainer, animatedStyle]}
+//         >
+//           <Pressable
+//             style={styles.action}
+//             onPress={() => selectLevel(action.key)}
+//           >
+//             {action.icon}
+//             <Text style={styles.actionText}>{action.label}</Text>
+//           </Pressable>
+//         </Animated.View>
+//       );
+//     })}
+
+//     <Pressable style={styles.fab} onPress={toggle}>
+//       <Animated.View 
+//         style={{ transform: [{ rotate: open ? "45deg" : "0deg" }] }}
+//       >
+//         <Feather name="plus" size={26} color="#fff" />
+//       </Animated.View>
+//     </Pressable>
+//   </Animated.View>
+// );
+
   return (
   <Animated.View
-  entering={FadeIn} exiting={FadeOut}
-    style={[
-      {
-        position: "absolute",
-        right: 0,
-        bottom: 0,
-        width,
-        height,
-        pointerEvents: "box-none",
-      },
-      containerAnimatedStyle,
-    ]}
+    entering={FadeIn}
+    exiting={FadeOut}
+    pointerEvents="box-none"
+    style={[StyleSheet.absoluteFill, containerAnimatedStyle]}
   >
     {open && (
       <Animated.View entering={FadeIn} exiting={FadeOut} style={styles.overlay}>
@@ -172,7 +220,7 @@ const fabTranslateY = useSharedValue(0);
     })}
 
     <Pressable style={styles.fab} onPress={toggle}>
-      <Animated.View 
+      <Animated.View
         style={{ transform: [{ rotate: open ? "45deg" : "0deg" }] }}
       >
         <Feather name="plus" size={26} color="#fff" />
@@ -181,7 +229,6 @@ const fabTranslateY = useSharedValue(0);
   </Animated.View>
 );
 
-  
 }
 
 

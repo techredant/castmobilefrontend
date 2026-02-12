@@ -7,6 +7,7 @@ import Video from "react-native-video";
 import { MediaViewerModal } from "@/components/posts/MediaViewModal";
 import { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { Gesture } from "react-native-gesture-handler";
+import { useLocalSearchParams } from "expo-router";
 
 const BASE_URL = "https://cast-api-zeta.vercel.app";
 
@@ -28,18 +29,18 @@ const NUM_COLUMNS = 3;
 const POST_SIZE = (SCREEN_WIDTH - POST_MARGIN * (NUM_COLUMNS * 2)) / NUM_COLUMNS;
 
 export default function ProfileScreen() {
-
-  const { userDetails, isLoadingUser, currentLevel } = useLevel();
+const { userId } = useLocalSearchParams();
     const [posts, setPosts] = useState<any[]>([]);
     const [refreshing, setRefreshing] = useState(false);
       const [modalVisible, setModalVisible] = useState(false);
       const [selectedIndex, setSelectedIndex] = useState(0);
+      const { currentLevel, isLoadingUser } = useLevel();
 
  const openMedia = (index: number) => {
   setSelectedIndex(index);
   setModalVisible(true);
 };
-
+console.log("Profile userId from params:", userId);
 // Flatten posts to all media
 const mediaPosts = posts
   .filter(post => post.media && post.media.length > 0)
@@ -51,17 +52,35 @@ const getData = () => {
   return following;
 };
 
-
-
   const [activeTab, setActiveTab] = useState<
     "posts" | "followers" | "following"
   >("posts");
 
+  const [profileUser, setProfileUser] = useState<any>(null);
+const [loadingProfile, setLoadingProfile] = useState(false);
+
+useEffect(() => {
+  const fetchProfile = async () => {
+    try {
+      setLoadingProfile(true);
+      const res = await axios.get(`${BASE_URL}/api/users/${userId}`);
+      setProfileUser(res.data);
+    } catch (err) {
+      console.error("Error fetching profile:", err);
+    } finally {
+      setLoadingProfile(false);
+    }
+  };
+
+  if (userId) fetchProfile();
+}, [userId]);
+
+
 const fetchPosts = useCallback(async () => {
-  if (!userDetails?.clerkId) return;
+  if (!userId) return;
 
   try {
-    const url = `${BASE_URL}/api/posts/${userDetails?.clerkId}?levelType=${currentLevel.type}&levelValue=${currentLevel.value}`;
+    const url = `${BASE_URL}/api/posts/${userId}?levelType=${currentLevel.type}&levelValue=${currentLevel.value}`;
 
     const res = await axios.get(url);
     setPosts(res.data ?? []);
@@ -70,11 +89,12 @@ const fetchPosts = useCallback(async () => {
   } finally {
     setRefreshing(false);
   }
-}, [currentLevel, userDetails?.clerkId]);
+}, [currentLevel, userId]);
 
 useEffect(() => {
   fetchPosts();
 }, [fetchPosts]);
+
 
 
   // /* ---------------- PINCH ZOOM ---------------- */
@@ -103,7 +123,7 @@ console.log("currentlevel", currentLevel);
 
 console.log("posts", posts);
 
-  if (isLoadingUser) {
+  if (loadingProfile) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text>Loading profile...</Text>
@@ -151,16 +171,16 @@ const renderItem = ({ item, index }: any) => {
         <Image
           source={{
             uri:
-              userDetails?.image?.trim() !== ""
-                ? userDetails.image
+              profileUser?.image?.trim() !== ""
+                ? profileUser?.image
                 : "https://i.pravatar.cc/150?img=32",
           }}
           style={styles.avatar}
         />
 
         <View style={styles.bio}>
-          <Text style={styles.name}>{userDetails?.firstName}</Text>
-          <Text style={styles.username}>@redanttech</Text>
+          <Text style={styles.name}>{profileUser?.firstName}</Text>
+          <Text style={styles.username}>@{profileUser?.nickName}</Text>
         </View>
 
         {/* Stats */}

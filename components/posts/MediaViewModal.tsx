@@ -38,7 +38,6 @@ export function MediaViewerModal({
   return (
     <Modal
       visible={modalVisible}
-      transparent
       animationType="fade"
       statusBarTranslucent
       onRequestClose={() => setModalVisible(false)}

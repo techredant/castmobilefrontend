@@ -17,10 +17,7 @@ export default function MainTabScreen() {
             backgroundColor="transparent"
             barStyle={isDark ? "light-content" : "dark-content"}
           />
-
-
       <ChannelList
-
         onSelect={(channel) => router.push(`/channel/${channel.cid}`)}
       />
     </>

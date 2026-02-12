@@ -14,6 +14,9 @@ import axios from "axios";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@/context/ThemeContext";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
+import { Ionicons } from "@expo/vector-icons";
+import { LoaderKitView } from "react-native-loader-kit";
+
 
 type Product = {
   _id: string;
@@ -39,7 +42,7 @@ export default function MarketScreen() {
     const fetchProducts = async () => {
       try {
         const res = await axios.get<Product[]>(
-          "https://bc-backend-three.vercel.app/api/products"
+          "https://cast-api-zeta.vercel.app/api/products"
         );
         setProducts(res.data);
       } catch (err) {
@@ -76,7 +79,13 @@ export default function MarketScreen() {
       <SafeAreaView
         style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: theme.background }}
       >
-        <ActivityIndicator size="large" color={theme.primary} />
+        
+        <LoaderKitView
+          style={{ width: 50, height: 50 }}
+          name={"BallScaleRippleMultiple"}
+          animationSpeedMultiplier={1.0} 
+          color={theme.text} 
+        />
       </SafeAreaView>
     );
   }
@@ -86,38 +95,69 @@ export default function MarketScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
       {/* SEARCH + SELL */}
-      <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 16, paddingHorizontal: 12, marginTop: 10 }}>
-        <TextInput
-          placeholder="Search products..."
-          placeholderTextColor={theme.subtext}
-          value={searchText}
-          onChangeText={setSearchText}
-          style={{
-            flex: 1,
-            paddingVertical: 10,
-            paddingHorizontal: 14,
-            borderRadius: 50,
-            backgroundColor: theme.card,
-            color: theme.text,
-            borderWidth: 1,
-            borderColor: theme.border,
-            marginLeft: 50
+     <View
+  style={{
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+    marginTop: 10,
+    width: "100%",
+    paddingHorizontal: 12,
+  }}
+>
+  {/* Search Input */}
+  <View style={{ flex: 1, position: "relative" }}>
+    <Ionicons
+      name="search"
+      size={20}
+      color={theme.subtext}
+      style={{
+        position: "absolute",
+        left: 14,
+        top: "50%",
+        transform: [{ translateY: -10 }],
+        zIndex: 1,
+      }}
+    />
 
-          }}
-        />
-        <Pressable
-          onPress={() => router.push("/market/sell-form")}
-          style={{
-            marginLeft: 5,
-            backgroundColor: theme.button,
-            paddingVertical: 10,
-            paddingHorizontal: 16,
-            borderRadius: 12,
-          }}
-        >
-          <Text style={{ color: theme.buttonText, fontWeight: "bold" }}>Sell</Text>
-        </Pressable>
-      </View>
+    <TextInput
+      placeholder="Search products..."
+      placeholderTextColor={theme.subtext}
+      value={searchText}
+      onChangeText={setSearchText}
+      style={{
+        width: "100%",
+        paddingVertical: 10,
+        paddingLeft: 40, // space for icon
+        paddingRight: 14,
+        borderRadius: 50,
+        backgroundColor: theme.card,
+        color: theme.text,
+        borderWidth: 1,
+        borderColor: theme.border,
+      }}
+    />
+  </View>
+
+  {/* Sell Button */}
+  <Pressable
+    onPress={() => router.push("/market/sell-form")}
+    style={{
+      marginLeft: 10,
+      backgroundColor: theme.button,
+      paddingVertical: 10,
+      paddingHorizontal: 16,
+      borderRadius: 12,
+      justifyContent: "center",
+      alignItems: "center",
+    }}
+  >
+    <Text style={{ color: theme.buttonText, fontWeight: "bold" }}>
+      Sell
+    </Text>
+  </Pressable>
+</View>
+
 
       {/* CATEGORY SCROLL */}
       <ScrollView
@@ -175,7 +215,7 @@ export default function MarketScreen() {
         columnWrapperStyle={{ justifyContent: "space-between", paddingHorizontal: 12 }}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => router.push(`/market/${item._id}`)}
+            onPress={() => router.push(`/(drawer)/(stream)/market/${item._id}`)}
             style={{
               flex: 1,
               marginBottom: 16,

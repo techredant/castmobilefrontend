@@ -24,8 +24,9 @@ import { router } from "expo-router";
 ======================= */
 const CustomDrawerContent = (props: DrawerContentComponentProps) => {
   const { user } = useUser();
-  const { userDetails, isLoadingUser } = useLevel();
+  const { userDetails, isLoadingUser, currentLevel, } = useLevel();
   const { theme } = useTheme();
+
 
   
 
@@ -49,6 +50,7 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
           borderBottomColor: theme.border,
           flexDirection: "row",
           alignItems: "center",
+           
         }}
       >
         <Image
@@ -56,8 +58,8 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
             uri: userDetails?.image || user?.imageUrl,
           }}
           style={{
-            width: 64,
-            height: 64,
+            width: 40,
+            height: 40,
             borderRadius: 32,
             backgroundColor: theme.border,
           }}
@@ -94,13 +96,29 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
             </>
           )}
         </View>
-
-        <Ionicons
+           <Ionicons
           name="chevron-forward"
           size={18}
           color={theme.subtext}
         />
-      </Pressable>
+      
+
+
+{/* push to level home */}
+      <Pressable
+        onPress={() => router.push("")} 
+        className="flex-row">
+          <Ionicons
+            name="home-outline"
+            size={18}
+            color={theme.subtext}
+          />
+          <Text>
+            Go Home
+          </Text>
+        </Pressable>
+</Pressable>
+     
 
       {/* DRAWER ITEMS */}
       <View style={{ paddingTop: 8 }}>
@@ -120,14 +138,13 @@ const CustomDrawerContent = (props: DrawerContentComponentProps) => {
 ======================= */
 export default function DrawerLayout() {
   const { theme } = useTheme();
+  const { currentLevel } = useLevel();
 
   return (
     <Drawer
       drawerContent={(props) => <CustomDrawerContent {...props} />}
       screenOptions={{
-        headerTitle: "",
-        headerTransparent: true,
-        headerLeft: () => null,
+        headerShown: false,
         drawerStyle: {
           backgroundColor: theme.card,
           width: 260,
@@ -138,15 +155,22 @@ export default function DrawerLayout() {
         },
         drawerActiveTintColor: theme.primary,
         drawerInactiveTintColor: theme.subtext,
+        drawerType: "front",
+    swipeEdgeWidth: 200,
       }}
-       initialRouteName="(tabs)"
+      initialRouteName="(tabs)" // ✅ default route ONLY
     >
+ 
       <Drawer.Screen
         name="(tabs)"
         options={{
-          drawerLabel: "Home",
+          drawerLabel:
+            currentLevel?.value
+              ? currentLevel.value.charAt(0).toUpperCase() +
+                currentLevel.value.slice(1)
+              : "Home",
           drawerIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
+            <Ionicons name="planet-outline" size={size} color={color} />
           ),
         }}
       />
@@ -207,3 +231,4 @@ export default function DrawerLayout() {
     </Drawer>
   );
 }
+
